@@ -1,49 +1,60 @@
-import React, { Component } from 'react';
-import { HorizontalBar } from 'react-chartjs-2';
-require('isomorphic-fetch');
-const data = {
-	labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-	datasets: [
-		{
-			label: 'My First dataset',
-			backgroundColor: 'rgba(255,99,132,0.2)',
-			borderColor: 'rgba(255,99,132,1)',
-			borderWidth: 1,
-			hoverBackgroundColor: 'rgba(255,99,132,0.4)',
-			hoverBorderColor: 'rgba(255,99,132,1)',
-			// data: []
-		}
-	]
-};
+import React from 'react';
+import { Bar } from 'react-chartjs-2';
 
-class Trail extends Component {
-  state={
-    data1:[]
+import graphql2chartjs from 'graphql2chartjs';
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
+
+const query = `
+ {
+  deviothaptestbedv01_devicemonitort {
+    data:devicemonitorvalue
+    label:devicemonitortime
   }
-  
-	render() {
-    fetch("https://more-troll-94.hasura.app/v1/graphql",{
-      method: "POST",
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({query:`query MyQuery {
-        Weather {
-          Temp_Max
-        }
-      }` 
-       })
+}
 
-  })
-  .then(res=>res.json())
-  .then(data=>this.setState({data1:data.data.Weather}))
-  console.log(this.state.data1[0])
-  
-		return (
-			<div className="flex flex-col items-center w-full max-w-md">
-				
-				<HorizontalBar data={this.state.data1} />
-			</div>
-		);
-	}
+`;
+
+// Chart component
+const Chart = ({ query }) => (
+  <Query
+    query={gql`${query}`}
+  >
+    {
+      ({data, error, loading}) => {
+        if (loading || error) {
+          return <div className="loadingIndicator">Please wait </div>;
+        }
+        // create graphql2chartjs instance
+        const g2c = new graphql2chartjs();
+        // add graphql data to graphql2chartjs instance
+        g2c.add(data, (datasetName, dataPoint) => ({
+          ...dataPoint,
+          chartType: 'bar',
+          backgroundColor: '#44c0c1',
+        }));
+        // render chart with g2c data :)
+        return (
+          <Bar data={g2c.data} />
+        )
+      }
+    }
+  </Query>
+)
+
+const Trail = () => {
+  return (
+    <div style={{width:"40%"}}>
+      <div key="bar">
+        <div style={{marginBottom: '20px'}} id="bar">
+            
+                <Chart query={query}/>
+              
+          </div>
+          
+      </div>
+    </div>
+  )
 }
 
 export default Trail;

@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 // import CardColumns from '@bit/react-bootstrap.react-bootstrap.card-columns';
 import {Card, CardGroup} from 'react-bootstrap';
 import Iframe from 'react-iframe';
-import SimpleMap from './../src/gmap';
+// import SimpleMap from './../src/gmap';
+import MapChart from './../src/gmap'
 require('isomorphic-fetch');
 // import ReactBootstrapStyle from '@bit/react-bootstrap.react-bootstrap.internal.style-links';
 
@@ -11,14 +12,23 @@ export class FrontPage extends Component {
         
 
     render() {
-        fetch("https://more-troll-94.hasura.app/v1/graphql",{
+        fetch("http://157.245.104.15/v1/graphql",{
             method: "POST",
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({query:"graphql_query"})
+            headers:{'Content-Type':'application/json',"x-hasura-admin-secret":"Lets0rg@20@)" },
+            body:JSON.stringify({query:`{
+              deviothaptestbedv01_facilitym {
+                latitude 
+                longitude
+                facilityname
+              }
+            }`})
 
         })
         .then(res=>res.json())
-        .then(data=>console.log({data}))
+        // .then(data=>data.data.deviothaptestbedv01_facilitym)
+        // console.log(JSON.stringify(data))
+        .then(data=>localStorage.setItem("data",JSON.stringify(data.data.deviothaptestbedv01_facilitym)));
+        // .then(data=>console.log({data}))
 //     fetch('https://more-troll-94.hasura.app/v1/graphql', {
 //   method: 'POST',
 //   headers: { 'Content-Type': 'application/json' },
@@ -37,30 +47,30 @@ export class FrontPage extends Component {
     //   `
     // });
   
-   fetch("https://more-troll-94.hasura.app/v1/graphql", {
-      headers: {'content-type': 'application/json'},
-      method: 'POST',
-      body: JSON.stringify({
-        query: `mutation {
-                insert_Weather(objects: [{Sr_No:13,Temp_Max:1400,Temp_Min:500}]) {
-              returning {
-                Sr_No
-                Temp_Max
-                Temp_Min
-              }
-            }
-          }
-        `
-      })
+//    fetch("https://more-troll-94.hasura.app/v1/graphql", {
+//       headers: {'content-type': 'application/json'},
+//       method: 'POST',
+//       body: JSON.stringify({
+//         query: `mutation {
+//                 insert_Weather(objects: [{Sr_No:13,Temp_Max:1400,Temp_Min:500}]) {
+//               returning {
+//                 Sr_No
+//                 Temp_Max
+//                 Temp_Min
+//               }
+//             }
+//           }
+//         `
+//       })
       
-    }).then(console.log("done"))
+//     }).then(console.log("done"))
   
     
     // const responseJson = response.json();
     // console.log(responseJson.data);
   
         return (
-            <div style={{"overflow-x": "hidden"}}>
+            <div style={{"overflowX": "hidden"}}>
                 <h1>WELCOME</h1>
                 
                         {/* <iframe src= width="720" height="391"></iframe> */}
@@ -148,6 +158,7 @@ export class FrontPage extends Component {
                         position="relative"/>
                         </div>
                         {/* <SimpleMap/> */}
+                        <MapChart/>
                 {/* <i className="https://app.redash.io/lpabinash/queries/506864#866870"></i> */}
                 {/* <Iframe src="https://app.redash.io/lpabinash/queries/506864#866870" height="500" width="500"/> */}
             </div>
