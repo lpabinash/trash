@@ -1,36 +1,5 @@
-// import React from "react";
-// import {
-//   ComposableMap,
-//   Geographies,
-//   Geography,
-//   ZoomableGroup,
-//   Marker
-// } from "react-simple-maps";
-const markers = [
 
-];
-
-// const geoUrl =
-//   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
-const mapdata=JSON.parse(localStorage.getItem('data'))
-// const marks=[mapdata.facilityname,mapdata.longitude,mapdata.latitude]
-console.log(mapdata.length)
-for(var i=0;i<mapdata.length;i++){
-  const facilityname=mapdata[i].facilityname;
-  const longitude=mapdata[i].longitude;
-  const latitude=mapdata[i].latitude;
-  console.log(facilityname,longitude,latitude)
-  if(latitude>0){
-    markers.push({"name": facilityname, "coordinates":[longitude,latitude]})
-  }
-  
-}
-
-
-
-
-// import { NULL } from "node-sass";
-import React from "react";
+import React, { Component } from 'react'
 import {
   ComposableMap,
   Geographies,
@@ -39,34 +8,47 @@ import {
 } from "react-simple-maps";
 require('isomorphic-fetch');
 
-//     fetch('http://157.245.104.15/v1/graphql', {
-//   method: 'POST',
-//   headers: { 'Content-Type': 'application/json',"x-hasura-admin-secret":"Lets0rg@20@)"  },
-//   // body: JSON.stringify({ "mutation": '{ Weather {"Sr_No":9 "Temp_Max":200,"Temp_Min":400 } }'  }),
-// })
-//   .then(res => res.json())
-//   .then(data => console.log(data));
-//    const query = JSON.stringify({
-//       query: `{
-//         deviothaptestbedv01_facilitym {
-//           latitude
-//           longitude
-//           facilityname
-//         }
-//       }
-//       `
-//     });
+export class MapChart extends Component {
+  state={
+    marker:[]
+  }
+  render() {
+    fetch("http://157.245.104.15/v1/graphql",{
+      method: "POST",
+      headers:{'Content-Type':'application/json',"x-hasura-admin-secret":"Lets0rg@20@)" },
+      body:JSON.stringify({query:`{
+        deviothaptestbedv01_facilitym {
+          latitude 
+          longitude
+          facilityname
+        }
+      }`})
 
-        // console.log(data)
-        
-
-const geoUrl =
+  })
+  .then(res=>res.json())
+  .then(data=>{
+      const markers=[]
+      for(var i=0;i<data.data.deviothaptestbedv01_facilitym.length;i++){
+          const facilityname=data.data.deviothaptestbedv01_facilitym[i].facilityname;
+          const longitude=data.data.deviothaptestbedv01_facilitym[i].longitude;
+          const latitude=data.data.deviothaptestbedv01_facilitym[i].latitude;
+          // console.log(facilityname,longitude,latitude)
+          
+          if(latitude>0){
+            markers.push({"name": facilityname, "coordinates":[longitude,latitude]})
+          }
+          
+          
+        }
+        this.setState({marker:markers});
+        // console.log(markers)
+  })
+  const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
-
-const MapChart = () => {
-  return (
-    <div>
-      <ComposableMap>
+  // console.log(markers)
+    return (
+      <div>
+           <ComposableMap>
         {/* <ZoomableGroup zoom={1}> */}
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
@@ -79,7 +61,7 @@ const MapChart = () => {
             }
           </Geographies>
           {/* </ZoomableGroup> */}
-                {markers.map(({ name, coordinates, }) => (
+                {this.state.marker.map(({ name, coordinates, }) => (
         <Marker key={name} coordinates={coordinates}>
           <g
             fill="none"
@@ -97,9 +79,11 @@ const MapChart = () => {
       ))}
         
       </ComposableMap>
-    </div>
-  );
-};
+      </div>
+    )
+  }
+}
 
-export default MapChart;
+export default MapChart
+
 
