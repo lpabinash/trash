@@ -77,7 +77,6 @@ export class UserTable extends Component {
         .then(data=>{
    
             const Userdata = data.data.deviothaptestbedv01_user_facility_aggregate.nodes
-            console.log(Userdata)
             const UserCount=data.data.deviothaptestbedv01_user_facility
             var userC=0
             var leadC=0
@@ -85,7 +84,6 @@ export class UserTable extends Component {
             for(var i = 0;i<UserCount.length;i++){
 
               if(UserCount[i].user_fact_user_role==="User"){
-                // console.log(UserCount[i].user_fact_user_role)
                 userC=userC+1
               }else if(UserCount[i].user_fact_user_role==="Manager"){
                 managerC=managerC+1
@@ -94,12 +92,6 @@ export class UserTable extends Component {
               }
               
             }
-            console.log(userC); 
-            console.log(managerC);
-            console.log(leadC);
-           
-            
-            // console.log(UserCount.length)
             this.setState({Userdata:Userdata,userC:userC,managerC:managerC,leadC:leadC})
               })
 
@@ -112,7 +104,7 @@ export class UserTable extends Component {
             const index=this.state.checked.indexOf(e.target.getAttribute('datakey'))
             this.state.checked.splice(index, 1)
         }
-        console.log(this.state.checked)
+        // console.log(this.state.checked)
         
     }
     handleChange1=(e)=>{
@@ -138,65 +130,66 @@ export class UserTable extends Component {
               });
              
           }
-          fetch("http://157.245.104.15/v1/graphql",{
-            method: "POST",
-            headers:{'Content-Type':'application/json',"x-hasura-admin-secret":"Lets0rg@20@)" },
-            body:JSON.stringify({query:`{
-              deviothaptestbedv01_user_facility_aggregate {
-                nodes {
-                  user_fact_access_delete
-                  user_fact_access_read
-                  user_fact_user_role
-                  user_fact_access_update
-                  user_fact_access_write
-                  facility_relation {
-                    facilityname
-                  }
-                  user_relation {
-                    useremailid
-                    usermobile
-                    username
-                    userstatus
-                    iduserm
-                  }
-                }
-              }
-              deviothaptestbedv01_user_facility {
-                user_fact_user_role
-              }
-              }`
-            })
+        //   fetch("http://157.245.104.15/v1/graphql",{
+        //     method: "POST",
+        //     headers:{'Content-Type':'application/json',"x-hasura-admin-secret":"Lets0rg@20@)" },
+        //     body:JSON.stringify({query:`{
+        //       deviothaptestbedv01_user_facility_aggregate {
+        //         nodes {
+        //           user_fact_access_delete
+        //           user_fact_access_read
+        //           user_fact_user_role
+        //           user_fact_access_update
+        //           user_fact_access_write
+        //           facility_relation {
+        //             facilityname
+        //           }
+        //           user_relation {
+        //             useremailid
+        //             usermobile
+        //             username
+        //             userstatus
+        //             iduserm
+        //           }
+        //         }
+        //       }
+        //       deviothaptestbedv01_user_facility {
+        //         user_fact_user_role
+        //       }
+        //       }`
+        //     })
   
-        })
-        .then(res=>res.json())
-        .then(data=>{
+        // })
+        // .then(res=>res.json())
+        // .then(data=>{
    
-            const Userdata = data.data.deviothaptestbedv01_user_facility_aggregate.nodes
-            console.log(Userdata)
-            const UserCount=data.data.deviothaptestbedv01_user_facility
-            var userC=0
-            var leadC=0
-            var managerC=0
-            for(var i = 0;i<UserCount.length;i++){
+        //     const Userdata = data.data.deviothaptestbedv01_user_facility_aggregate.nodes
+        //     console.log(Userdata)
+        //     const UserCount=data.data.deviothaptestbedv01_user_facility
+        //     var userC=0
+        //     var leadC=0
+        //     var managerC=0
+        //     for(var i = 0;i<UserCount.length;i++){
 
-              if(UserCount[i].user_fact_user_role==="User"){
-                // console.log(UserCount[i].user_fact_user_role)
-                userC=userC+1
-              }else if(UserCount[i].user_fact_user_role==="Manager"){
-                managerC=managerC+1
-              }else{
-                leadC=leadC+1
-              }
+        //       if(UserCount[i].user_fact_user_role==="User"){
+        //         // console.log(UserCount[i].user_fact_user_role)
+        //         userC=userC+1
+        //       }else if(UserCount[i].user_fact_user_role==="Manager"){
+        //         managerC=managerC+1
+        //       }else{
+        //         leadC=leadC+1
+        //       }
               
-            }
-            console.log(userC); 
-            console.log(managerC);
-            console.log(leadC);
+        //     }
+        //     // console.log(userC); 
+        //     // console.log(managerC);
+        //     // console.log(leadC);
            
             
-            // console.log(UserCount.length)
-            this.setState({Userdata:Userdata,userC:userC,managerC:managerC,leadC:leadC})
-              })
+        //     // console.log(UserCount.length)
+        //     this.setState({Userdata:Userdata,userC:userC,managerC:managerC,leadC:leadC})
+        //       })
+        this.componentWillMount()
 
         
     }
@@ -504,70 +497,50 @@ this.state.contacts.map((item)=>{
     });
   
   }
-  fetch("http://157.245.104.15/v1/graphql",{
-    method: "POST",
-    headers:{'Content-Type':'application/json',"x-hasura-admin-secret":"Lets0rg@20@)" },
-    body:JSON.stringify({query:`{
-      deviothaptestbedv01_user_facility_aggregate {
-        nodes {
-          user_fact_access_delete
-          user_fact_access_read
-          user_fact_user_role
-          user_fact_access_update
-          user_fact_access_write
-          facility_relation {
-            facilityname
-          }
-          user_relation {
-            useremailid
-            usermobile
-            username
-            userstatus
-            iduserm
-          }
-        }
-      }
-      deviothaptestbedv01_user_facility {
-  user_fact_user_role
-}
-      }`
-    })
-
-})
-.then(res=>res.json())
-.then(data=>{
-
-    const Userdata = data.data.deviothaptestbedv01_user_facility_aggregate.nodes
-    console.log(Userdata)
-    const UserCount=data.data.deviothaptestbedv01_user_facility
-    var userC=0
-    var leadC=0
-    var managerC=0
-    for(var i = 0;i<UserCount.length;i++){
-
-      if(UserCount[i].user_fact_user_role==="User"){
-        // console.log(UserCount[i].user_fact_user_role)
-        userC=userC+1
-      }else if(UserCount[i].user_fact_user_role==="Manager"){
-        managerC=managerC+1
-      }else{
-        leadC=leadC+1
-      }
-      
-    }
-    console.log(userC); 
-    console.log(managerC);
-    console.log(leadC);
-   
-    
-    // console.log(UserCount.length)
-    this.setState({Userdata:Userdata,userC:userC,managerC:managerC,leadC:leadC})
-      })
 
 
+this.componentWillMount()
 
 
 })}
+
+ondeleteclick=()=>{
+  console.log(this.state.checked)
+  this.state.checked.map((item)=>{
+    
+    const query = JSON.stringify({
+      query: `mutation MyMutation {
+        delete_deviothaptestbedv01_user_facility(where: {user_relation: {iduserm: {_eq: ${parseInt(item)}}}}) {
+          returning {
+            user_relation {
+              iduserm
+            }
+            user_fact_id
+          }
+        }
+        delete_deviothaptestbedv01_userm(where: {iduserm: {_eq: ${parseInt(item)}}}) {
+          returning {
+            iduserm
+          }
+        }
+        }
+      `
+    });
+  
+    const response = fetch("http://157.245.104.15/v1/graphql", {
+      headers: {'content-type': 'application/json',"x-hasura-admin-secret":"Lets0rg@20@)"},
+      method: 'POST',
+      body: query,
+    });
+  })
+  // this.setState({checked:[]})
+
+  this.componentWillMount()
+  this.componentWillMount()
+
+
+
+}
 
   
     render() {
@@ -575,13 +548,13 @@ this.state.contacts.map((item)=>{
             return (
               
                 <tr key={pos+1}>
-                <td><input type="checkbox" datakey={item.user_relation.iduserm}  onChange={this.handleChange}></input></td>
-                <td style={{textAlign:"left"}}>{(item.user_relation.username)?item.user_relation.username:'N/A'}</td>
-                <td style={{textAlign:"left"}}>{item.user_fact_user_role}</td>
-                <td style={{textAlign:"left"}}>{(item.user_relation.userstatus)?item.user_relation.userstatus:'N/A'} </td>
-                <td style={{textAlign:"right"}}>{(item.user_relation.usermobile)?item.user_relation.usermobile:'N/A'}</td>
-                <td style={{textAlign:"left"}}>{(item.user_relation.useremailid)?item.user_relation.useremailid:'N/A'}</td>
-                <td style={{textAlign:"left"}}>{(item.facility_relation!=null||undefined)?item.facility_relation.facilityname:'N/A'}</td>
+                <td ><input type="checkbox" datakey={item.user_relation.iduserm}  onChange={this.handleChange}></input></td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.user_relation.username)?item.user_relation.username:'N/A'}</td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{item.user_fact_user_role}</td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.user_relation.userstatus)?item.user_relation.userstatus:'N/A'} </td>
+                <td style={{textAlign:"right",fontSize:"9px"}}>{(item.user_relation.usermobile)?item.user_relation.usermobile:'N/A'}</td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.user_relation.useremailid)?item.user_relation.useremailid:'N/A'}</td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.facility_relation!=null||undefined)?item.facility_relation.facilityname:'N/A'}</td>
                 <td><input type="checkbox" datakey1={item.user_relation.iduserm} checked={(item.user_fact_access_read)? true : false}  onChange={this.handleChange2}></input></td>
                 <td><input type="checkbox" datakey2={item.user_relation.iduserm} checked={(item.user_fact_access_write)? true : false} onChange={this.handleChange3}></input></td>
                 <td><input type="checkbox" datakey3={item.user_relation.iduserm} checked={(item.user_fact_access_update)? true : false} onChange={this.handleChange4}></input></td>
@@ -597,12 +570,12 @@ this.state.contacts.map((item)=>{
               // <Link to="/Facilities"  >
               <tr key={pos+1}>
                 <td><input type="checkbox" datakey={item.user_relation.iduserm}  onChange={this.handleChange}></input></td>
-                <td style={{textAlign:"left"}}>{(item.user_relation.username)?item.user_relation.username:'N/A'}</td>
-                <td style={{textAlign:"left"}}>{item.user_fact_user_role}</td>
-                <td style={{textAlign:"left"}}>{(item.user_relation.userstatus)?item.user_relation.userstatus:'N/A'} </td>
-                <td style={{textAlign:"right"}}>{(item.user_relation.usermobile)?item.user_relation.usermobile:'N/A'}</td>
-                <td style={{textAlign:"left"}}>{(item.user_relation.useremailid)?item.user_relation.useremailid:'N/A'}</td>
-                <td style={{textAlign:"left"}}>{(item.facility_relation!=null)?item.facility_relation.facilityname:'N/A'}</td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.user_relation.username)?item.user_relation.username:'N/A'}</td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{item.user_fact_user_role}</td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.user_relation.userstatus)?item.user_relation.userstatus:'N/A'} </td>
+                <td style={{textAlign:"right",fontSize:"9px"}}>{(item.user_relation.usermobile)?item.user_relation.usermobile:'N/A'}</td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.user_relation.useremailid)?item.user_relation.useremailid:'N/A'}</td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.facility_relation!=null)?item.facility_relation.facilityname:'N/A'}</td>
                 <td><input type="checkbox" datakey1={item.user_relation.iduserm} checked={(item.user_fact_access_read)? true : false}  onChange={this.handleChange2}></input></td>
                 <td><input type="checkbox" datakey2={item.user_relation.iduserm} checked={(item.user_fact_access_write)? true : false} onChange={this.handleChange3}></input></td>
                 <td><input type="checkbox" datakey3={item.user_relation.iduserm} checked={(item.user_fact_access_update)? true : false} onChange={this.handleChange4}></input></td>
@@ -618,11 +591,11 @@ this.state.contacts.map((item)=>{
          
                 <tr key={pos+1}>
                 <td><input type="checkbox"></input></td>
-                <td style={{textAlign:"left"}}>{item.username}</td>
-                <td style={{textAlign:"left"}}>{item.user_fact_user_role}</td>
-                <td style={{textAlign:"left"}}>{item.userstatus} </td>
-                <td style={{textAlign:"right"}}>{item.usermobile}</td>
-                <td style={{textAlign:"left"}}>{item.useremailid}</td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{item.username}</td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{item.user_fact_user_role}</td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{item.userstatus} </td>
+                <td style={{textAlign:"right",fontSize:"9px"}}>{item.usermobile}</td>
+                <td style={{textAlign:"left",fontSize:"9px"}}>{item.useremailid}</td>
                 <td><input type="checkbox"  checked={parseInt(item.user_fact_access_read)}></input></td>
                 <td><input type="checkbox" checked={parseInt(item.user_fact_access_write)}></input></td>
                 <td><input type="checkbox"  checked={parseInt(item.user_fact_access_update)}></input></td>
@@ -651,6 +624,7 @@ this.state.contacts.map((item)=>{
           
           <Dropdown.Item eventKey="Active" >Active</Dropdown.Item>
           <Dropdown.Item eventKey="Inactive">Inactive</Dropdown.Item>
+          <Dropdown.Item onClick={this.ondeleteclick} eventKey="delete">Delete</Dropdown.Item>
           {/* <Dropdown.Item eventKey="Lead">Lead</Dropdown.Item> */}
           </DropdownButton>
             <DropdownButton  style={{marginRight:"20px"}} id="dropdown-basic-button" onSelect={this.handleChange1}title="Change Role to">
@@ -691,11 +665,12 @@ this.state.contacts.map((item)=>{
      <thead >
           <tr >
             <th><input type="checkbox"></input></th>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Mobile</th>
-            <th>EMail</th>
+            <th  style={{textAlign:"left"}}>Name</th>
+            <th  style={{textAlign:"left"}}>Role</th>
+            <th style={{textAlign:"left"}}>Status</th>
+            <th style={{textAlign:"rightt"}}>Mobile</th>
+            <th style={{textAlign:"left"}}>EMail</th>
+            <th style={{textAlign:"left"}}>Facility</th>
             <th>Read</th>
             <th>Write</th>
             <th>Update</th>
@@ -734,12 +709,12 @@ this.state.contacts.map((item)=>{
      <thead >
           <tr >
           <th><input type="checkbox"></input></th>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Mobile</th>
-            <th>EMail</th>
-            <th>Facility</th>
+            <th  style={{textAlign:"left"}}>Name</th>
+            <th  style={{textAlign:"left"}}>Role</th>
+            <th style={{textAlign:"left"}}>Status</th>
+            <th style={{textAlign:"rightt"}}>Mobile</th>
+            <th style={{textAlign:"left"}}>EMail</th>
+            <th style={{textAlign:"left"}}>Facility</th>
             <th>Read</th>
             <th>Write</th>
             <th>Update</th>
