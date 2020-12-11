@@ -8,8 +8,12 @@ import "./main.css";
 import Popup from 'reactjs-popup';
 import { CSVLink } from "react-csv";
 import 'reactjs-popup/dist/index.css';
+// import Styled from 'styled-components';
 require('isomorphic-fetch');
-
+const ClearbitLogo = require('clearbit-logo');
+let logo = new ClearbitLogo
+const contentStyle = { borderRadius:"20px",borderTopRightRadius:"20px",marginTop:"100px" };
+// const modal = { backgroundColor: 'yellow' };
 export class UserTable extends Component {
     state={
         username:[],
@@ -27,22 +31,29 @@ export class UserTable extends Component {
         contacts:[],
         headers: [
           { label: "username", key: "username" },
-          { label: "userstatus", key: "userstatus" },
-          { label: "userpassword", key: "userpassword" },
+          // { label: "userstatus", key: "userstatus" },
+          // { label: "userpassword", key: "userpassword" },
           { label: "usermobile", key: "usermobile" },
           { label: "useremailid", key: "useremailid" },
-          { label: "user_fact_access_delete", key: "user_fact_access_delete" },
-          { label: "user_fact_access_read", key: "user_fact_access_read" },
-          { label: "user_fact_access_update", key: "user_fact_access_update" },
-          { label: "user_fact_access_write", key: "user_fact_access_write" },
-          { label: "user_fact_company_id", key: "user_fact_company_id" },
-          { label: "user_fact_email_id", key: "user_fact_email_id" },
-          { label: "user_fact_id", key: "user_fact_id" },
-          { label: "user_fact_user_role", key: "user_fact_user_role" }
+        
+          // { label: "user_fact_email_id", key: "user_fact_email_id" },
+          // { label: "user_fact_id", key: "user_fact_id" },
+          // { label: "user_fact_user_role", key: "user_fact_user_role" },
+          // { label: "user_fact_access_delete", key: "user_fact_access_delete" },
+          // { label: "user_fact_access_read", key: "user_fact_access_read" },
+          // { label: "user_fact_access_update", key: "user_fact_access_update" },
+          // { label: "user_fact_access_write", key: "user_fact_access_write" },
+          // { label: "user_fact_company_id", key: "user_fact_company_id" },
 
-        ]
+        ],
+        logo:"",file:undefined
     }
     componentWillMount(){
+      logo.topSuggestion('Ebisu Technologies').then((company) => {
+        console.log(company.logo);
+        this.setState({logo:company.logo})
+
+      });
         fetch("http://157.245.104.15/v1/graphql",{
             method: "POST",
             headers:{'Content-Type':'application/json',"x-hasura-admin-secret":"Lets0rg@20@)" },
@@ -77,6 +88,7 @@ export class UserTable extends Component {
         .then(data=>{
    
             const Userdata = data.data.deviothaptestbedv01_user_facility_aggregate.nodes
+            Userdata.map(i=>{i["checked"]=false})
             const UserCount=data.data.deviothaptestbedv01_user_facility
             var userC=0
             var leadC=0
@@ -92,23 +104,70 @@ export class UserTable extends Component {
               }
               
             }
+            console.log(Userdata)
             this.setState({Userdata:Userdata,userC:userC,managerC:managerC,leadC:leadC})
               })
 
            
     }
     handleChange=(e)=>{
-        if(e.target.checked===true&&e.target.getAttribute('datakey')){
-            this.state.checked.push(e.target.getAttribute('datakey'))
-        }else{
-            const index=this.state.checked.indexOf(e.target.getAttribute('datakey'))
-            this.state.checked.splice(index, 1)
-        }
+        // if(e.target.checked===true&&e.target.getAttribute('datakey')){
+        //     this.state.checked.push(e.target.getAttribute('datakey'))
+        // }else{
+        //     const index=this.state.checked.indexOf(e.target.getAttribute('datakey'))
+        //     this.state.checked.splice(index, 1)
+        // }
         // console.log(this.state.checked)
+        var selectedValues = [],
+			newData = [];
+// console.log(e.target.getAttribute('datakey'))
+		this.state.Userdata.forEach(function(item) {
+			if(item.user_relation.iduserm == e.target.getAttribute('datakey')) {
+				item.checked = e.target.checked;
+			}
+			if(item.checked) {
+        selectedValues.push(item.user_relation.iduserm);
+        // console.log(selectedValues)
+        // this.setState({checked:selectedValues})
+
+			}
+      newData.push(item);
+      console.log(item)
+		});
+    this.setState({Userdata: newData,checked:selectedValues});
+    // console.log(this.state.checked)
+    
         
     }
+    
+
+    toggleHandle=(e)=>{
+      if(e.target.checked===true){
+        var newData = [];
+        var selectedValues=[]
+      this.state.Userdata.forEach(function(item) {
+        item.checked = true;
+        selectedValues.push(item.user_relation.iduserm)
+        // this.setState({checked:item.user_relation.iduserm})
+        newData.push(item);
+      });
+      // console.log(this.state.checked)
+      this.setState({Userdata: newData,checked:selectedValues});
+      }else{
+        var newData = [];
+        // var selectedValues=[]
+      this.state.Userdata.forEach(function(item) {
+        item.checked = false;
+        newData.push(item);
+      });
+  
+      this.setState({Userdata: newData,checked:[]});
+      
+      }
+    }
+
     handleChange1=(e)=>{
-        console.log(e); 
+        console.log(this.state.checked); 
         for (var i = 0; i < this.state.checked.length; i++) {
             let index = parseInt(this.state.checked[i])
             console.log(index)
@@ -130,66 +189,9 @@ export class UserTable extends Component {
               });
              
           }
-        //   fetch("http://157.245.104.15/v1/graphql",{
-        //     method: "POST",
-        //     headers:{'Content-Type':'application/json',"x-hasura-admin-secret":"Lets0rg@20@)" },
-        //     body:JSON.stringify({query:`{
-        //       deviothaptestbedv01_user_facility_aggregate {
-        //         nodes {
-        //           user_fact_access_delete
-        //           user_fact_access_read
-        //           user_fact_user_role
-        //           user_fact_access_update
-        //           user_fact_access_write
-        //           facility_relation {
-        //             facilityname
-        //           }
-        //           user_relation {
-        //             useremailid
-        //             usermobile
-        //             username
-        //             userstatus
-        //             iduserm
-        //           }
-        //         }
-        //       }
-        //       deviothaptestbedv01_user_facility {
-        //         user_fact_user_role
-        //       }
-        //       }`
-        //     })
-  
-        // })
-        // .then(res=>res.json())
-        // .then(data=>{
-   
-        //     const Userdata = data.data.deviothaptestbedv01_user_facility_aggregate.nodes
-        //     console.log(Userdata)
-        //     const UserCount=data.data.deviothaptestbedv01_user_facility
-        //     var userC=0
-        //     var leadC=0
-        //     var managerC=0
-        //     for(var i = 0;i<UserCount.length;i++){
-
-        //       if(UserCount[i].user_fact_user_role==="User"){
-        //         // console.log(UserCount[i].user_fact_user_role)
-        //         userC=userC+1
-        //       }else if(UserCount[i].user_fact_user_role==="Manager"){
-        //         managerC=managerC+1
-        //       }else{
-        //         leadC=leadC+1
-        //       }
-              
-        //     }
-        //     // console.log(userC); 
-        //     // console.log(managerC);
-        //     // console.log(leadC);
-           
-            
-        //     // console.log(UserCount.length)
-        //     this.setState({Userdata:Userdata,userC:userC,managerC:managerC,leadC:leadC})
-        //       })
+      
         this.componentWillMount()
+
 
         
     }
@@ -243,6 +245,7 @@ export class UserTable extends Component {
     .then(data=>{
 
         const Userdata = data.data.deviothaptestbedv01_user_facility_aggregate.nodes
+        Userdata.map(i=>{i["checked"]=false})
         this.setState({Userdata:Userdata})
           })
 
@@ -299,6 +302,7 @@ export class UserTable extends Component {
   .then(data=>{
 
       const Userdata = data.data.deviothaptestbedv01_user_facility_aggregate.nodes
+      Userdata.map(i=>{i["checked"]=false})
       // const UserCount = data.data.deviothaptestbedv01_user_facility
       // console.log(UserCount)
       this.setState({Userdata:Userdata})
@@ -356,6 +360,7 @@ handleChange4=(e)=>{
 .then(data=>{
 
     const Userdata = data.data.deviothaptestbedv01_user_facility_aggregate.nodes
+    Userdata.map(i=>{i["checked"]=false})
     this.setState({Userdata:Userdata})
       })
 
@@ -411,6 +416,7 @@ handleChange5=(e)=>{
 .then(data=>{
 
     const Userdata = data.data.deviothaptestbedv01_user_facility_aggregate.nodes
+    Userdata.map(i=>{i["checked"]=false})
     this.setState({Userdata:Userdata})
       })
 
@@ -448,61 +454,84 @@ handleDrop=(e)=>{
         // setContacts((existing) => [...existing, ...result.data]);
       });
   }else{
-      window.alert("File Type must be vnd.ms-excel")
+      window.alert("File Type must be vnd.ms-excel or CSV")
   }
 
 
 }
+onFileChange=(e)=>{
+  e.preventDefault();
+  // this.setState({setHighlighted:false})
+  // setHighlighted(false);
+  console.log(e.target.files[0])
+  if(e.target.files[0].type==="application/vnd.ms-excel"){
+      Array.from(e.target.files)
+      .filter((file) => file.type === "application/vnd.ms-excel")
+      .forEach(async(file) => {
+        // const text = file.text();
+        // const result = parse(text);
+        const text = await file.text();
+          const result = parse(text, { header: true });
+        console.log(result)
+        this.setState({contacts:result.data})
+        // setContacts((existing) => [...existing, ...result.data]);
+      });
+  }else{
+      window.alert("File Type must be vnd.ms-excel or CSV")
+  }
+}
 
 handleSubmission=(e)=>{
-console.log(this.state.contacts)
+// console.log(this.state.contacts)
 // e.preventDefault();
-this.state.contacts.map((item)=>{
-  if(item.username!=undefined){
+
+  this.state.contacts.map((item)=>{
+    if(item.username!=undefined){
+      
+      const query = JSON.stringify({
+        query: `mutation MyMutation {
+            insert_deviothaptestbedv01_userm(objects: {userpassword: "${item.userpassword}", username: "${item.username}", usermobile: "${item.usermobile}", useremailid: "${item.useremailid}"}) {
+                returning {
+                  userstatus
+                  userpassword
+                  username
+                  usermobile
+                  useremailid
+                  iduserm
+                }
+              }
+              insert_deviothaptestbedv01_user_facility(objects: {user_fact_user_role: "${item.user_fact_user_role}", user_fact_facility_id: ${parseInt(item.user_fact_facility_id)}, user_fact_email_id: "${item.useremailid}", user_fact_company_id: "${item.user_fact_company_id}", user_fact_access_write: ${parseInt(item.user_fact_access_write)?true:false}, user_fact_access_update: ${parseInt(item.user_fact_access_update)?true:false}, user_fact_access_read: ${parseInt(item.user_fact_access_read)?true:false}, user_fact_access_delete: ${parseInt(item.user_fact_access_delete)?true:false}}) {
+                returning {
+                  user_fact_access_delete
+                  user_fact_access_read
+                  user_fact_access_update
+                  user_fact_access_write
+                  user_fact_company_id
+                  user_fact_email_id
+                  user_fact_id
+                  user_fact_user_role
+                  user_fact_facility_id
+                }
+              }
+            
+          }
+        `
+      });
     
-    const query = JSON.stringify({
-      query: `mutation MyMutation {
-          insert_deviothaptestbedv01_userm(objects: {userpassword: "${item.userpassword}", username: "${item.username}", usermobile: "${item.usermobile}", useremailid: "${item.useremailid}"}) {
-              returning {
-                userstatus
-                userpassword
-                username
-                usermobile
-                useremailid
-                iduserm
-              }
-            }
-            insert_deviothaptestbedv01_user_facility(objects: {user_fact_user_role: "${item.user_fact_user_role}", user_fact_facility_id: ${parseInt(item.user_fact_facility_id)}, user_fact_email_id: "${item.user_fact_email_id}", user_fact_company_id: "${item.user_fact_company_id}", user_fact_access_write: ${parseInt(item.user_fact_access_write)?true:false}, user_fact_access_update: ${parseInt(item.user_fact_access_update)?true:false}, user_fact_access_read: ${parseInt(item.user_fact_access_read)?true:false}, user_fact_access_delete: ${parseInt(item.user_fact_access_delete)?true:false}}) {
-              returning {
-                user_fact_access_delete
-                user_fact_access_read
-                user_fact_access_update
-                user_fact_access_write
-                user_fact_company_id
-                user_fact_email_id
-                user_fact_id
-                user_fact_user_role
-                user_fact_facility_id
-              }
-            }
-          
-        }
-      `
-    });
+      const response = fetch("http://157.245.104.15/v1/graphql", {
+        headers: {'content-type': 'application/json',"x-hasura-admin-secret":"Lets0rg@20@)"},
+        method: 'POST',
+        body: query,
+      });
+    
+    
   
-    const response = fetch("http://157.245.104.15/v1/graphql", {
-      headers: {'content-type': 'application/json',"x-hasura-admin-secret":"Lets0rg@20@)"},
-      method: 'POST',
-      body: query,
-    });
   
-  }
+  
+  }})
 
-
-this.componentWillMount()
-
-
-})}
+   this.componentWillMount()   
+}
 
 ondeleteclick=()=>{
   console.log(this.state.checked)
@@ -526,7 +555,7 @@ ondeleteclick=()=>{
         }
       `
     });
-  
+    
     const response = fetch("http://157.245.104.15/v1/graphql", {
       headers: {'content-type': 'application/json',"x-hasura-admin-secret":"Lets0rg@20@)"},
       method: 'POST',
@@ -536,11 +565,65 @@ ondeleteclick=()=>{
   // this.setState({checked:[]})
 
   this.componentWillMount()
-  this.componentWillMount()
 
 
 
 }
+onInactive=()=>{
+  console.log(this.state.checked)
+
+  this.state.checked.map((item)=>{
+    
+    const query = JSON.stringify({
+      query: `mutation MyMutation {
+        update_deviothaptestbedv01_userm(_set: {userstatus: false}, where: {iduserm: {_eq: ${parseInt(item)}}}) {
+          returning {
+            userstatus
+          }
+        }
+      }
+      
+      `
+    });
+    
+    const response = fetch("http://157.245.104.15/v1/graphql", {
+      headers: {'content-type': 'application/json',"x-hasura-admin-secret":"Lets0rg@20@)"},
+      method: 'POST',
+      body: query,
+    });
+  })
+  // this.setState({checked:[]})
+
+  this.componentWillMount()
+}
+onActive=()=>{
+  console.log(this.state.checked)
+
+  this.state.checked.map((item)=>{
+    
+    const query = JSON.stringify({
+      query: `mutation MyMutation {
+        update_deviothaptestbedv01_userm(_set: {userstatus: true}, where: {iduserm: {_eq: ${parseInt(item)}}}) {
+          returning {
+            userstatus
+          }
+        }
+      }
+      
+      `
+    });
+    
+    const response = fetch("http://157.245.104.15/v1/graphql", {
+      headers: {'content-type': 'application/json',"x-hasura-admin-secret":"Lets0rg@20@)"},
+      method: 'POST',
+      body: query,
+    });
+  })
+  // this.setState({checked:[]})
+
+  this.componentWillMount()
+}
+
 
   
     render() {
@@ -548,13 +631,13 @@ ondeleteclick=()=>{
             return (
               
                 <tr key={pos+1}>
-                <td ><input type="checkbox" datakey={item.user_relation.iduserm}  onChange={this.handleChange}></input></td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.user_relation.username)?item.user_relation.username:'N/A'}</td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{item.user_fact_user_role}</td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.user_relation.userstatus)?item.user_relation.userstatus:'N/A'} </td>
-                <td style={{textAlign:"right",fontSize:"9px"}}>{(item.user_relation.usermobile)?item.user_relation.usermobile:'N/A'}</td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.user_relation.useremailid)?item.user_relation.useremailid:'N/A'}</td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.facility_relation!=null||undefined)?item.facility_relation.facilityname:'N/A'}</td>
+                <td ><input type="checkbox" datakey={item.user_relation.iduserm}  onChange={this.handleChange} checked= {item.checked ? true : false} ></input></td>
+                <td style={{textAlign:"left",fontSize:"12px"}}>{(item.user_relation.username)?item.user_relation.username:'N/A'}</td>
+                <td style={{textAlign:"left",fontSize:"12px",marginRight:"-20px"}}>{item.user_fact_user_role}</td>
+                <td style={{textAlign:"left",fontSize:"12px"}}>{(item.user_relation.userstatus===true)?"Active":'Inactive'} </td>
+                <td style={{textAlign:"right",fontSize:"12px"}}>{(item.user_relation.usermobile)?item.user_relation.usermobile:'N/A'}</td>
+                <td style={{textAlign:"left",fontSize:"12px"}}>{(item.user_relation.useremailid)?item.user_relation.useremailid:'N/A'}</td>
+                <td style={{textAlign:"left",fontSize:"12px"}}>{(item.facility_relation!=null||undefined)?item.facility_relation.facilityname:'N/A'}</td>
                 <td><input type="checkbox" datakey1={item.user_relation.iduserm} checked={(item.user_fact_access_read)? true : false}  onChange={this.handleChange2}></input></td>
                 <td><input type="checkbox" datakey2={item.user_relation.iduserm} checked={(item.user_fact_access_write)? true : false} onChange={this.handleChange3}></input></td>
                 <td><input type="checkbox" datakey3={item.user_relation.iduserm} checked={(item.user_fact_access_update)? true : false} onChange={this.handleChange4}></input></td>
@@ -569,13 +652,13 @@ ondeleteclick=()=>{
           return (
               // <Link to="/Facilities"  >
               <tr key={pos+1}>
-                <td><input type="checkbox" datakey={item.user_relation.iduserm}  onChange={this.handleChange}></input></td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.user_relation.username)?item.user_relation.username:'N/A'}</td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{item.user_fact_user_role}</td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.user_relation.userstatus)?item.user_relation.userstatus:'N/A'} </td>
-                <td style={{textAlign:"right",fontSize:"9px"}}>{(item.user_relation.usermobile)?item.user_relation.usermobile:'N/A'}</td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.user_relation.useremailid)?item.user_relation.useremailid:'N/A'}</td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{(item.facility_relation!=null)?item.facility_relation.facilityname:'N/A'}</td>
+                <td><input type="checkbox" datakey={item.user_relation.iduserm}  onChange={this.handleChange} checked= {item.checked ? true : false}></input></td>
+                <td style={{textAlign:"left",fontSize:"12px"}}>{(item.user_relation.username)?item.user_relation.username:'N/A'}</td>
+                <td style={{textAlign:"left",fontSize:"12px"}}>{item.user_fact_user_role}</td>
+                <td style={{textAlign:"left",fontSize:"12px"}}>{(item.user_relation.userstatus)?item.user_relation.userstatus:'N/A'} </td>
+                <td style={{textAlign:"right",fontSize:"12px"}}>{(item.user_relation.usermobile)?item.user_relation.usermobile:'N/A'}</td>
+                <td style={{textAlign:"left",fontSize:"12px"}}>{(item.user_relation.useremailid)?item.user_relation.useremailid:'N/A'}</td>
+                <td style={{textAlign:"left",fontSize:"12px"}}>{(item.facility_relation!=null)?item.facility_relation.facilityname:'N/A'}</td>
                 <td><input type="checkbox" datakey1={item.user_relation.iduserm} checked={(item.user_fact_access_read)? true : false}  onChange={this.handleChange2}></input></td>
                 <td><input type="checkbox" datakey2={item.user_relation.iduserm} checked={(item.user_fact_access_write)? true : false} onChange={this.handleChange3}></input></td>
                 <td><input type="checkbox" datakey3={item.user_relation.iduserm} checked={(item.user_fact_access_update)? true : false} onChange={this.handleChange4}></input></td>
@@ -590,16 +673,17 @@ ondeleteclick=()=>{
             return (
          
                 <tr key={pos+1}>
-                <td><input type="checkbox"></input></td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{item.username}</td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{item.user_fact_user_role}</td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{item.userstatus} </td>
-                <td style={{textAlign:"right",fontSize:"9px"}}>{item.usermobile}</td>
-                <td style={{textAlign:"left",fontSize:"9px"}}>{item.useremailid}</td>
+                {/* <td><input type="checkbox"></input></td> */}
+                <td style={{textAlign:"center",fontSize:"12px"}}>{item.username}</td>
+                {/* <td style={{textAlign:"center",fontSize:"12px"}}>{item.user_fact_user_role}</td> */}
+                {/* <td style={{textAlign:"center",fontSize:"12px"}}>{item.userstatus} </td> */}
+                <td style={{textAlign:"center",fontSize:"12px"}}>{item.usermobile}</td>
+                <td style={{textAlign:"center",fontSize:"12px"}}>{item.useremailid}</td>
+                {/* <td style={{textAlign:"left",fontSize:"9px"}}></td>
                 <td><input type="checkbox"  checked={parseInt(item.user_fact_access_read)}></input></td>
                 <td><input type="checkbox" checked={parseInt(item.user_fact_access_write)}></input></td>
                 <td><input type="checkbox"  checked={parseInt(item.user_fact_access_update)}></input></td>
-                <td><input type="checkbox"  checked={parseInt(item.user_fact_access_delete)}></input></td>
+                <td><input type="checkbox"  checked={parseInt(item.user_fact_access_delete)}></input></td> */}
 
                 {/* <td>Running</td> */}
                 </tr>
@@ -611,7 +695,7 @@ ondeleteclick=()=>{
       
 
         return (
-            <div style={{width:"90vw"}}>
+            <div style={{width:"100%",overflowX:"hidden"}}>
               <div style={{display:"flex",marginBottom:"20px"}}>
               <h5 style={{marginRight:"20px"}}>Manager:{this.state.managerC}</h5>
               <h5 style={{marginRight:"20px"}}>User:{this.state.userC}</h5>
@@ -622,8 +706,8 @@ ondeleteclick=()=>{
                 <div style={{display:"flex"}}>
             <DropdownButton  style={{marginRight:"20px"}} id="dropdown-basic-button"title="Bulk Action">
           
-          <Dropdown.Item eventKey="Active" >Active</Dropdown.Item>
-          <Dropdown.Item eventKey="Inactive">Inactive</Dropdown.Item>
+          <Dropdown.Item onClick={this.onActive} eventKey="Active" >Active</Dropdown.Item>
+          <Dropdown.Item onClick={this.onInactive} eventKey="Inactive">Inactive</Dropdown.Item>
           <Dropdown.Item onClick={this.ondeleteclick} eventKey="delete">Delete</Dropdown.Item>
           {/* <Dropdown.Item eventKey="Lead">Lead</Dropdown.Item> */}
           </DropdownButton>
@@ -636,45 +720,50 @@ ondeleteclick=()=>{
             {/* </Dropdown.Menu>
             </Dropdown> */}
             <Button style={{backgroundColor:"#922c88",color:"white",height:"45px"}} variant="purple">Add User</Button>
+            
+            </div>
+            <div style={{display:"flex",borderRadius:"20px"}}>
+              <div style={{marginRight:"10px",borderRadius:"20px"}}>
             <Popup
-    trigger={<Button  style={{marginLeft:"65%",marginRight:"20px"}}> Import </Button>}
+    trigger={<Button  > Import </Button>}
     modal
-    nested
+    {...{  contentStyle }}
   >
     {close => (
-      <div >
-        <button className="close" onClick={close}>
+      <div style={{marginRight:"10px",borderRadius:"20px"}}>
+        {/* <Button className="close" onClick={close}>
           &times;
-        </button>
+        </Button> */}
       
-        <div style={{width:"100%"}}>
-                 <div style={{textAlign:"center"}}>
+        <div style={{width:"100%",borderRadius:"20px"}}>
+                 <div style={{textAlign:"center",}}>
       <div
         className={`p-6 my-2 mx-auto max-w-md border-2 ${
           this.state.highlighted ? "border-green-600 bg-green-100" : "border-gray-600"
         }`}
+        style={{display:"flex",borderRadius:"10px",backgroundColor:"#1871ad",border:"3px dashed white"}}
         onDragEnter={this.handleDrag}
         onDragLeave={this.handleDragLeave}
         onDragOver={this.handleDragOver}
         onDrop={this.handleDrop}
       >
-        DROP HERE
+        <p style={{marginRight:"2px",marginTop:"3px",marginLeft:"10px",color:"white"}}>DROP YOUR FILE HERE OR</p>
+        <input onChange={this.onFileChange} style={{color:"white",border:"none",outline:"none",width:"200px",marginLeft:"10px"}} type="file"/>
       </div>
-      <div style={{width:"100%",backgroundColor:"white",paddingTop:"50px",paddingBottom:"20px",marginTop:"20px",borderRadius:"20px"}}>
-       <Table style={{textAlign:"center",borderRadius:"10px",backgroundColor:"white",fontSize:"10px",borderCollapse:"collapse"}} >
+      <div style={{width:"100%",height:"350px", backgroundColor:"white",borderRadius:"20px",overflowY:"scroll"}}>
+       <Table style={{textAlign:"center",borderRadius:"10px",backgroundColor:"white",fontSize:"10px",borderCollapse:"collapse", tableLayout: "fixed",
+    width:"100%",overflowY:"scroll",}} >
      <thead >
-          <tr >
-            <th><input type="checkbox"></input></th>
-            <th  style={{textAlign:"left"}}>Name</th>
-            <th  style={{textAlign:"left"}}>Role</th>
-            <th style={{textAlign:"left"}}>Status</th>
-            <th style={{textAlign:"rightt"}}>Mobile</th>
-            <th style={{textAlign:"left"}}>EMail</th>
-            <th style={{textAlign:"left"}}>Facility</th>
-            <th>Read</th>
+          <tr style={{height:"10px"}}>
+            {/* <th><input type="checkbox"></input></th> */}
+            <th  style={{textAlign:"center"}}>Name</th>
+            <th style={{textAlign:"center"}}>Mobile</th>
+            <th style={{textAlign:"center"}}>E-mail</th>
+            {/* <th style={{textAlign:"center"}}>Facility</th> */}
+            {/* <th>Read</th>
             <th>Write</th>
             <th>Update</th>
-            <th>Delete</th>
+            <th>Delete</th> */}
 
           </tr>
         </thead>
@@ -683,37 +772,42 @@ ondeleteclick=()=>{
         </tbody>
         </Table>
             </div>
-            <button onClick={() => {
+            <Button style={{marginRight:"50px"}}
+            onClick={() => {
+              console.log('modal closed ');
+              close()
+              }}>Cancel</Button>
+            <Button onClick={() => {
               console.log('modal closed ');
               this.handleSubmission()
               close();
-            }}>Upload</button>
+            }}>Import</Button>
+            
      
     </div>
             </div>
       </div>
     )}
   </Popup>
-  <Button><CSVLink data={this.state.Userdata} headers={this.state.headers}>
+  <Button style={{marginLeft:"20px"}}><CSVLink data={this.state.Userdata} headers={this.state.headers}>
   Export
 </CSVLink></Button>
-            </div>
-            <div>
-            <Form style={{marginRight: "50px"}}>
-                    <Form.Control placeholder="Enter UserName to Search" onChange={this.onInputSubmit}/>
+</div>
+            <Form >
+                    <Form.Control style={{width:"22vw",marginLeft:"10px"}} placeholder="Search" onChange={this.onInputSubmit}/>
             </Form>
             </div>
             </div>
-    <div style={{width:"92vw",backgroundColor:"white",marginLeft: "-50px",paddingTop:"50px",paddingBottom:"20px",marginTop:"20px",borderRadius:"20px"}}>
-       <Table style={{textAlign:"center",borderRadius:"10px",backgroundColor:"white",width:"85vw",marginLeft:"auto",marginRight:"auto",borderCollapse:"collapse"}} >
+    <div style={{backgroundColor:"white",paddingTop:"50px",paddingBottom:"20px",marginTop:"20px",borderRadius:"20px"}}>
+       <Table style={{textAlign:"center",borderRadius:"10px",backgroundColor:"white",width:"100%",marginLeft:"auto",marginRight:"auto",borderCollapse:"collapse"}} >
      <thead >
           <tr >
-          <th><input type="checkbox"></input></th>
+          <th><input type="checkbox" onChange={this.toggleHandle}></input></th>
             <th  style={{textAlign:"left"}}>Name</th>
             <th  style={{textAlign:"left"}}>Role</th>
             <th style={{textAlign:"left"}}>Status</th>
-            <th style={{textAlign:"rightt"}}>Mobile</th>
-            <th style={{textAlign:"left"}}>EMail</th>
+            <th style={{width:"100px",textAlign:"right"}}>Mobile</th>
+            <th style={{textAlign:"left"}}>E-mail</th>
             <th style={{textAlign:"left"}}>Facility</th>
             <th>Read</th>
             <th>Write</th>
@@ -728,7 +822,7 @@ ondeleteclick=()=>{
         </Table>
             </div>
             
-           
+           <div><img src={this.state.logo}/></div>
             </div>
         )
     }
