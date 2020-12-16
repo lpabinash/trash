@@ -1,0 +1,58 @@
+.leaflet-container {
+    width: 100%;
+    height: 100%;
+    /* margin-top:-40px ; */
+    left: 0;
+    top:75px;
+    /* margin-right: -100px; */
+    border-radius: 12px;
+    position:relative;
+    padding:0px;
+    margin:0px;
+    /* flex-wrap: nowrap; */
+    /* noWrap:true */
+  }
+ 
+  
+    .leaflet-popup-tip {
+      /* width: 0px;
+      height: 0px; */
+      background-color: black;
+    }  
+    .leaflet-popup-content-wrapper {
+      background-color: black;
+      /* height:200px */
+    }
+
+    .markercluster-map{
+      position: fixed !important;
+    }
+    button.rec-dot{
+      /* background-color:#1871ad; */
+      box-shadow: 0 0 1px 3px #1871ad;
+    }
+    
+    button.rec-dot:hover, button.rec-dot:active, button.rec-dot:focus  {
+      box-shadow: 0 0 1px 3px #1871ad;
+    }
+    .itemWrapper{
+      outline: none;
+      background-color:rgb(24, 113, 173)
+      
+    }
+    /* .itemWrapper:active{
+      background-color:rgb(255, 0, 13);
+    } */
+    .facName{
+      color:white;
+    }
+    .facName:active{
+      color:orangered;
+    }
+    .leaflet-control-zoom{
+      left: 95vw;
+      top:5vh;
+    }
+    .marker{
+      height:10px;
+    }
